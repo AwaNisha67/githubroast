@@ -122,8 +122,17 @@ if (!process.env.VERCEL && fs.existsSync(clientDistPath)) {
   });
 }
 
-// Start listener for standalone/local development
-if (!process.env.VERCEL || process.env.PORT) {
+// Start listener only when run directly as main module, never in tests or Vercel
+const isDirectRun = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
+const isTestMode = Boolean(
+  process.env.NODE_TEST_CONTEXT ||
+  process.env.NODE_ENV === 'test' ||
+  process.argv.some(a => a.includes('test')) ||
+  process.execArgv.some(a => a.includes('test')) ||
+  process.env.VITEST
+);
+
+if (isDirectRun && !isTestMode && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 GitHub Roast & Rescue server running on http://localhost:${PORT}`);
     console.log(`🔑 GitHub Token: ${Boolean(process.env.GITHUB_TOKEN && process.env.GITHUB_TOKEN.trim()) ? 'Configured ✅ (High Rate Limit)' : 'Unset (Public Rate Limit)'}`);

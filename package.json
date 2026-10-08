@@ -8,7 +8,12 @@
     "build": "npm --prefix client run build",
     "client": "npm --prefix client run dev",
     "server": "node --watch server/server.js",
-    "install:all": "npm --prefix server install && npm --prefix client install"
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "test": "npm --prefix server test && npm --prefix client test",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test",
+    "test:coverage": "npm --prefix server run test:coverage",
+    "lint": "npm --prefix client run lint"
   },
   "keywords": [
     "github",
