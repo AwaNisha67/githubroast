@@ -120,7 +120,7 @@ export default function RoastCard({ roast, username }) {
           Roasting the profile, not the person
         </span>
         <span className="font-mono text-slate-500">
-          {allRoasts.length > 1 ? `Click Reroll for more` : `AI PromptWars MVP`}
+          {allRoasts.length > 1 ? `Click Reroll for more` : ``}
         </span>
       </div>
     </div>
