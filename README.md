@@ -1,5 +1,5 @@
 # 🔥 GitHub Roast & Rescue
-### AI-Powered GitHub Portfolio Auditor • PromptWars Hackathon 8-Hour MVP
+### AI-Powered GitHub Portfolio Auditor • PromptWars Hackathon
 
 > **"Don't just tell developers that their GitHub needs work. Tell them why—and exactly how to fix it."**
 
