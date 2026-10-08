@@ -1,0 +1,23 @@
+{
+  "name": "github-roast-and-rescue",
+  "version": "1.0.0",
+  "description": "GitHub Roast & Rescue: AI-Powered GitHub Portfolio Auditor (PromptWars Hackathon MVP)",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "build": "npm --prefix client run build",
+    "client": "npm --prefix client run dev",
+    "server": "node --watch server/server.js",
+    "install:all": "npm --prefix server install && npm --prefix client install"
+  },
+  "keywords": [
+    "github",
+    "portfolio-auditor",
+    "recruiter",
+    "ai",
+    "hackathon",
+    "promptwars"
+  ],
+  "author": "",
+  "license": "MIT"
+}
