@@ -1,6 +1,7 @@
 import React from 'react';
-import { Flame, ShieldAlert, Settings, RefreshCw } from 'lucide-react';
+import { ShieldAlert, Settings, RefreshCw } from 'lucide-react';
 import { GithubIcon } from './Icons';
+import octocatIcon from '../assets/octocat-roast-rescue.png';
 
 export default function Navbar({ onOpenSettings, onReset, hasReport }) {
   return (
@@ -10,8 +11,8 @@ export default function Navbar({ onOpenSettings, onReset, hasReport }) {
           onClick={onReset}
           className="flex items-center gap-3 cursor-pointer group transition-all"
         >
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-600 shadow-lg shadow-orange-500/20 group-hover:scale-105 transition-transform">
-            <Flame className="w-5 h-5 text-white" />
+          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl group-hover:scale-105 transition-transform">
+            <img src={octocatIcon} alt="Roast and Rescue Octocat" className="w-10 h-10 object-contain rounded-xl" />
             <span className="absolute -bottom-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[10px] text-white font-bold ring-2 ring-slate-950">
               🛟
             </span>
@@ -39,14 +40,14 @@ export default function Navbar({ onOpenSettings, onReset, hasReport }) {
               <span>New Audit</span>
             </button>
           )}
-
+{/* 
           <button
             onClick={onOpenSettings}
             className="p-2 rounded-lg text-slate-400 hover:text-white bg-slate-900/80 hover:bg-slate-800 border border-slate-800 transition-colors"
             title="API Keys & Token Settings"
           >
             <Settings className="w-4 h-4" />
-          </button>
+          </button> */}
 
           <a
             href="https://github.com"

@@ -23,21 +23,18 @@ export default function HeroSection({ onAnalyze, isLoading, error }) {
   };
 
   return (
-    <section className="relative overflow-hidden py-12 sm:py-20 lg:py-24">
+    <section className="relative overflow-hidden py-12 sm:py-20 lg:py-24 ">
       {/* Background radial glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-orange-600/15 via-red-600/10 to-indigo-600/15 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
         {/* Hackathon Badge */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-orange-500/10 to-amber-500/10 border border-orange-500/20 text-orange-400 mb-6 shadow-sm">
-          <Sparkles className="w-3.5 h-3.5 text-orange-400" />
-          <span>PromptWars Hackathon • 8-Hour MVP Edition</span>
-        </div>
+    
 
         {/* PRD Main Headline */}
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white mb-4 sm:mb-6 leading-tight">
           Your GitHub deserves <br className="hidden sm:block" />
-          <span className="bg-gradient-to-r from-orange-400 via-rose-400 to-amber-300 bg-clip-text text-transparent">
+          <span className="headline-accent bg-gradient-to-r from-orange-400 via-rose-400 to-amber-300 bg-clip-text text-transparent">
             the truth.
           </span>
         </h1>
