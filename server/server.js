@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 import { fetchGitHubUserData } from './services/github.js';
@@ -23,8 +24,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
+// Health check endpoint (supports both /api/health and /health)
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     status: 'ok',
     app: 'GitHub Roast & Rescue API',
@@ -32,8 +33,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Main Analysis Endpoint
-app.post('/api/analyze', async (req, res) => {
+// Main Analysis Endpoint (supports both /api/analyze and /analyze)
+app.post(['/api/analyze', '/analyze'], async (req, res) => {
   try {
     const { username, githubToken, aiApiKey } = req.body;
 
@@ -103,23 +104,30 @@ app.post('/api/analyze', async (req, res) => {
   }
 });
 
-// Production static file serving if client build exists
+// Production static file serving for local standalone runs if client build exists
 const clientDistPath = path.join(__dirname, '../client/dist');
-app.use(express.static(clientDistPath));
+if (!process.env.VERCEL && fs.existsSync(clientDistPath)) {
+  app.use(express.static(clientDistPath));
 
-app.get('*', (req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    return next();
-  }
-  res.sendFile(path.join(clientDistPath, 'index.html'), (err) => {
-    if (err) {
-      res.status(404).send('Not Found');
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api') || req.path === '/health' || req.path === '/analyze') {
+      return next();
     }
+    res.sendFile(path.join(clientDistPath, 'index.html'), (err) => {
+      if (err) {
+        res.status(404).send('Not Found');
+      }
+    });
   });
-});
+}
 
-app.listen(PORT, () => {
-  console.log(`🚀 GitHub Roast & Rescue server running on http://localhost:${PORT}`);
-  console.log(`🔑 GitHub Token: ${Boolean(process.env.GITHUB_TOKEN && process.env.GITHUB_TOKEN.trim()) ? 'Configured ✅ (High Rate Limit)' : 'Unset (Public Rate Limit)'}`);
-  console.log(`🤖 Gemini AI Key: ${Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim()) ? 'Configured ✅' : 'Unset (Using Dynamic Engine)'}`);
-});
+// Start listener for standalone/local development
+if (!process.env.VERCEL || process.env.PORT) {
+  app.listen(PORT, () => {
+    console.log(`🚀 GitHub Roast & Rescue server running on http://localhost:${PORT}`);
+    console.log(`🔑 GitHub Token: ${Boolean(process.env.GITHUB_TOKEN && process.env.GITHUB_TOKEN.trim()) ? 'Configured ✅ (High Rate Limit)' : 'Unset (Public Rate Limit)'}`);
+    console.log(`🤖 Gemini AI Key: ${Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim()) ? 'Configured ✅' : 'Unset (Using Dynamic Engine)'}`);
+  });
+}
+
+export default app;

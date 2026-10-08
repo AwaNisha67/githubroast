@@ -143,7 +143,11 @@ export default function App() {
     setCurrentUsername(username.trim());
 
     try {
-      const response = await fetch('/api/analyze', {
+      const apiEndpoint = import.meta.env.VITE_API_URL
+        ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api/analyze`
+        : '/api/analyze';
+
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
