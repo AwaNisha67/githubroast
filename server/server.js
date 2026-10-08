@@ -86,6 +86,7 @@ app.post(['/api/analyze', '/analyze'], async (req, res) => {
       roast: {
         title: aiFeedback.roast_title,
         text: aiFeedback.roast,
+        additionalRoasts: aiFeedback.additional_roasts || [],
       },
       recruiterView: aiFeedback.recruiter_view,
       problems,

@@ -47,6 +47,60 @@ export async function generateAIFeedback(userData, scoreData, problemsData, cust
   return generateDynamicFeedback(aiPayload, problemsData);
 }
 
+// User-curated iconic roasts collection
+export const ICONIC_ROASTS = [
+  {
+    title: "TODO Since 2023",
+    text: "Your README.md is shorter than a goldfish's attention span—it literally just says 'TODO' from 2023.",
+    category: "readme",
+  },
+  {
+    title: "Diary of Poor Life Choices",
+    text: "Your commit history reads like a diary of poor life choices: 'fixed it', 'pls work', 'oh god why', 'reverting.'",
+    category: "commits",
+  },
+  {
+    title: "Family Reunion Therapy Session",
+    text: "You’ve got more open issues than a family reunion therapy session.",
+    category: "issues",
+  },
+  {
+    title: "Pull My Own Repo",
+    text: "Reading your code makes me want to pull my own Git repository.",
+    category: "code",
+  },
+  {
+    title: "The Shah Rukh Khan Diagnosis",
+    text: "Even Shah Rukh Khan in My Name is Khan couldn't diagnose the state of your dependency tree.",
+    category: "dependencies",
+  },
+  {
+    title: "The Arthouse Item Song",
+    text: "Your profile is like an item song dropped randomly in an arthouse film: completely out of place, unoptimized, and painful to watch.",
+    category: "profile",
+  },
+  {
+    title: "Witness Protection Portfolio",
+    text: "You keep your profile on 'Private' not for security, but because you're terrified someone might actually see the spaghetti code you call a portfolio.",
+    category: "privacy",
+  },
+  {
+    title: "The Unprepared Viva Exam",
+    text: "Every time a recruiter visits your GitHub, you probably sweat more than a student giving a viva without reading the syllabus.",
+    category: "recruiter",
+  },
+  {
+    title: "LinkedIn Architect vs GitHub Reality",
+    text: "You spend hours tweaking your LinkedIn bio to look like a senior architect, but one look at your repos exposes you as a glorified copy-paster.",
+    category: "resume",
+  },
+  {
+    title: "The Karan Johar Merge Conflict",
+    text: "Your branches are messier than a family drama directed by Karan Johar, and twice as dramatic when they merge.",
+    category: "branches",
+  },
+];
+
 /**
  * Calls Google Gemini API
  */
@@ -58,6 +112,17 @@ Rules:
 1. Roast the PROFILE and code presentation, NOT the person. Keep it clever, developer-insider humorous, and constructive.
 2. Formulate the "Recruiter 30-Second View" as an experienced tech recruiter or hiring manager skimming their profile.
 3. Keep the roast punchy (2-3 sentences max).
+4. Draw inspiration or pick/adapt from this curated set of savage community roasts if they fit the profile:
+- "Your README.md is shorter than a goldfish's attention span—it literally just says 'TODO' from 2023."
+- "Your commit history reads like a diary of poor life choices: 'fixed it', 'pls work', 'oh god why', 'reverting.'"
+- "You’ve got more open issues than a family reunion therapy session."
+- "Reading your code makes me want to pull my own Git repository."
+- "Even Shah Rukh Khan in My Name is Khan couldn't diagnose the state of your dependency tree."
+- "Your profile is like an item song dropped randomly in an arthouse film: completely out of place, unoptimized, and painful to watch."
+- "You keep your profile on 'Private' not for security, but because you're terrified someone might actually see the spaghetti code you call a portfolio."
+- "Every time a recruiter visits your GitHub, you probably sweat more than a student giving a viva without reading the syllabus."
+- "You spend hours tweaking your LinkedIn bio to look like a senior architect, but one look at your repos exposes you as a glorified copy-paster."
+- "Your branches are messier than a family drama directed by Karan Johar, and twice as dramatic when they merge."
 
 Here is the developer's profile data:
 ${JSON.stringify(payload, null, 2)}
@@ -66,6 +131,10 @@ Respond with a valid JSON object matching this exact structure:
 {
   "roast": "A 2-3 sentence humorous roast specifically citing their numbers, repos, or habits.",
   "roast_title": "A witty 3-5 word headline for the roast (e.g., 'The Secret Agent Developer', 'README Phobia In Full Bloom')",
+  "additional_roasts": [
+    { "title": "Headline", "text": "Another witty roast from the collection matching their profile" },
+    { "title": "Headline 2", "text": "A second witty roast" }
+  ],
   "recruiter_view": {
     "verdict": "One short verdict sentence from the recruiter",
     "quick_take": "A 2 sentence hiring manager impression",
@@ -119,29 +188,40 @@ function generateDynamicFeedback(payload, problems) {
   const { username, repos, repos_without_description, repos_without_readme, languages, profile_readme, days_since_last_push, top_projects, score } = payload;
   const topProjNames = top_projects.map(p => `"${p.name}"`).join(', ') || 'your projects';
 
-  // 1. Generate Contextual Roast
+  // 1. Generate Contextual Roast using user-curated iconic roasts
   let roast = '';
   let roastTitle = '';
 
-  if (repos_without_description > 5 && !profile_readme) {
-    roast = `You have ${repos} repositories, but ${repos_without_description} of them have no description and your profile README is nowhere to be found. Your code is apparently undercover and operating strictly on a need-to-know basis.`;
-    roastTitle = 'The Classified Agent Profile';
-  } else if (repos_without_readme > (repos * 0.5)) {
-    roast = `More than half of your repositories have zero README files. You seem to treat your GitHub like a secret diary where documentation is considered a security vulnerability.`;
-    roastTitle = 'README Phobia In Full Bloom';
-  } else if (days_since_last_push > 90) {
-    roast = `Your last push was ${days_since_last_push} days ago. Archeologists are currently securing funding to excavate your commit history and determine if your terminal is still functional.`;
-    roastTitle = 'The Ancient Artifact Collection';
-  } else if (languages.length === 1) {
-    roast = `You have built everything exclusively in ${languages[0]}. Loyalty is an admirable trait, but recruiters might start wondering if other programming languages are illegal in your jurisdiction.`;
-    roastTitle = 'The Single-Stack Monolith';
+  if (repos_without_readme > 0 && repos_without_readme >= (repos * 0.35)) {
+    roast = "Your README.md is shorter than a goldfish's attention span—it literally just says 'TODO' from 2023.";
+    roastTitle = "TODO Since 2023";
+  } else if (score < 60) {
+    roast = "Every time a recruiter visits your GitHub, you probably sweat more than a student giving a viva without reading the syllabus.";
+    roastTitle = "The Unprepared Viva Exam";
+  } else if (!profile_readme || repos_without_description > 5) {
+    roast = "You spend hours tweaking your LinkedIn bio to look like a senior architect, but one look at your repos exposes you as a glorified copy-paster.";
+    roastTitle = "LinkedIn Architect vs GitHub Reality";
+  } else if (languages.length >= 3 || repos > 12) {
+    roast = "Even Shah Rukh Khan in My Name is Khan couldn't diagnose the state of your dependency tree.";
+    roastTitle = "The Shah Rukh Khan Diagnosis";
+  } else if (days_since_last_push > 60) {
+    roast = "Your commit history reads like a diary of poor life choices: 'fixed it', 'pls work', 'oh god why', 'reverting.'";
+    roastTitle = "Diary of Poor Life Choices";
+  } else if (repos <= 3) {
+    roast = "You keep your profile on 'Private' not for security, but because you're terrified someone might actually see the spaghetti code you call a portfolio.";
+    roastTitle = "Witness Protection Portfolio";
   } else if (score >= 80) {
-    roast = `Honestly, your GitHub is surprisingly solid with ${repos} repos and active commits. But recruiters will still find a way to ask why your top project doesn't have 10,000 GitHub stars and a venture funding round.`;
-    roastTitle = 'Suspiciously Competent';
+    roast = "Your branches are messier than a family drama directed by Karan Johar, and twice as dramatic when they merge.";
+    roastTitle = "The Karan Johar Merge Conflict";
   } else {
-    roast = `You've got ${repos} repositories, including ${topProjNames}, but with ${repos_without_description} missing descriptions and ${repos_without_readme} missing READMEs, you're making recruiters guess whether you're a 10x developer or a 10x copy-paster.`;
-    roastTitle = 'The Mystery Box Portfolio';
+    roast = "Your profile is like an item song dropped randomly in an arthouse film: completely out of place, unoptimized, and painful to watch.";
+    roastTitle = "The Arthouse Item Song";
   }
+
+  // Provide all other iconic roasts for interactive cycling
+  const additionalRoasts = ICONIC_ROASTS
+    .filter(r => r.text !== roast)
+    .map(r => ({ title: r.title, text: r.text }));
 
   // 2. Generate Recruiter 30-Second View
   const strengths = [];
@@ -194,6 +274,7 @@ function generateDynamicFeedback(payload, problems) {
   return {
     roast,
     roast_title: roastTitle,
+    additional_roasts: additionalRoasts,
     recruiter_view: {
       verdict,
       quick_take: quickTake,
